@@ -57,6 +57,101 @@
     <tr><td><code>RETENTION_DAYS</code></td><td><code>7</code></td></tr>
     <tr><td><code>SNS_TOPIC_ARN</code></td><td><code>arn:aws:sns:ap-southeast-2:...</code></td></tr>
   </table>
+
+```Python
+import boto3
+import datetime
+import os
+
+SOURCE_REGION = os.environ.get('SOURCE_REGION', 'ap-southeast-2')
+DEST_REGION = os.environ.get('DEST_REGION', 'ap-southeast-1')
+RETENTION_DAYS = int(os.environ.get('RETENTION_DAYS', 7))
+SNS_TOPIC_ARN = os.environ.get('SNS_TOPIC_ARN')
+
+ec2 = boto3.client('ec2', region_name=SOURCE_REGION)
+ec2_dest = boto3.client('ec2', region_name=DEST_REGION)
+sns = boto3.client('sns', region_name=SOURCE_REGION)
+cloudwatch = boto3.client('cloudwatch', region_name=SOURCE_REGION)
+
+def lambda_handler(event, context):
+    now = datetime.datetime.utcnow()
+    snapshots_created = 0
+
+    # Find instances tagged for backup
+    reservations = ec2.describe_instances(
+        Filters=[{'Name': 'tag:backup', 'Values': ['true']}]
+    )['Reservations']
+
+    for res in reservations:
+        for instance in res['Instances']:
+            instance_id = instance['InstanceId']
+            for vol in instance.get('BlockDeviceMappings', []):
+                volume_id = vol['Ebs']['VolumeId']
+                desc = f"Backup-{instance_id}-{now.date()}"
+                
+                # Create snapshot
+                snap = ec2.create_snapshot(
+                    VolumeId=volume_id,
+                    Description=desc,
+                    TagSpecifications=[{
+                        'ResourceType': 'snapshot',
+                        'Tags': [
+                            {'Key': 'InstanceId', 'Value': instance_id},
+                            {'Key': 'Date', 'Value': now.strftime('%Y-%m-%d')}
+                        ]
+                    }]
+                )
+                snapshot_id = snap['SnapshotId']
+                print(f"Created snapshot {snapshot_id} for {volume_id}")
+                snapshots_created += 1
+
+                # Copy to destination region
+                try:
+                    copy = ec2_dest.copy_snapshot(
+                        SourceRegion=SOURCE_REGION,
+                        SourceSnapshotId=snapshot_id,
+                        Description=f"Copied from {SOURCE_REGION} on {now.date()}"
+                    )
+                    dest_snapshot_id = copy['SnapshotId']
+                    ec2_dest.create_tags(
+                        Resources=[dest_snapshot_id],
+                        Tags=[
+                            {'Key': 'CopiedFrom', 'Value': SOURCE_REGION},
+                            {'Key': 'OriginalSnapshotId', 'Value': snapshot_id},
+                            {'Key': 'Date', 'Value': now.strftime('%Y-%m-%d')}
+                        ]
+                    )
+                    print(f"Copied snapshot to {DEST_REGION} as {dest_snapshot_id}")
+                except Exception as e:
+                    print(f"Failed to copy {snapshot_id} to {DEST_REGION}: {e}")
+
+    # Cleanup old snapshots
+    for snap in ec2.describe_snapshots(OwnerIds=['self'])['Snapshots']:
+        if (now - snap['StartTime'].replace(tzinfo=None)).days >= RETENTION_DAYS:
+            ec2.delete_snapshot(SnapshotId=snap['SnapshotId'])
+            print(f"Deleted old snapshot {snap['SnapshotId']}")
+
+    # SNS alert
+    if SNS_TOPIC_ARN:
+        sns.publish(
+            TopicArn=SNS_TOPIC_ARN,
+            Subject="Smart Vault Backup Done",
+            Message=f"{snapshots_created} snapshots created. Cross-region copy complete."
+        )
+
+    # CloudWatch metric
+    if snapshots_created > 0:
+        cloudwatch.put_metric_data(
+            Namespace='SmartVault',
+            MetricData=[{
+                'MetricName': 'SnapshotsCreated',
+                'Dimensions': [{'Name': 'Service', 'Value': 'Backup'}],
+                'Value': snapshots_created,
+                'Unit': 'Count'
+            }]
+        )
+
+```
 </section>
 
 <section>

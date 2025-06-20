@@ -1,19 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Smart Vault - AWS EC2 Backup System</title>
-  <style>
-    body { font-family: sans-serif; margin: 2rem; line-height: 1.6; color: #333; }
-    h1, h2, h3 { color: #1a73e8; }
-    code, pre { background: #f5f5f5; padding: 0.25em 0.5em; border-radius: 4px; }
-    table { width: 100%; border-collapse: collapse; margin: 1em 0; }
-    th, td { border: 1px solid #ccc; padding: 8px; }
-    th { background: #f0f0f0; }
-    section { margin-bottom: 3rem; }
-  </style>
-</head>
+
 <body>
 
 <h1>Smart Vault: Automated EC2 Backup System on AWS</h1>

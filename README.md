@@ -96,26 +96,13 @@
 
 <section>
   <h2>IAM Role Permissions</h2>
-  <p>The Lambda execution role must include:</p>
+  <p>The Lambda execution role includes:</p>
   <ul>
-    <li><code>ec2:DescribeInstances</code></li>
-    <li><code>ec2:CreateSnapshot</code></li>
-    <li><code>ec2:DeleteSnapshot</code></li>
-    <li><code>ec2:DescribeSnapshots</code></li>
-    <li><code>ec2:CreateTags</code></li>
-    <li><code>ec2:CopySnapshot</code></li>
-    <li><code>cloudwatch:PutMetricData</code></li>
-    <li><code>logs:*</code></li>
-    <li><code>sns:Publish</code></li>
+    <li><code>AmazonEC2FullAccess</code></li>
+    <li><code>AmazonSNSFullAccess</code></li>
+    <li><code>CloudWatchLogsFullAccess</code></li>
+    <li><code>AmazonS3FullAccess</code></li>
   </ul>
-</section>
-
-<section>
-  <h2>Sample EC2 Tagging</h2>
-  <pre><code>aws ec2 create-tags \\
-  --resources i-1234567890abcdef0 \\
-  --tags Key=backup,Value=true
-  </code></pre>
 </section>
 
 <section>
@@ -123,35 +110,16 @@
   <ol>
     <li>Launch EC2 instances and attach EBS volumes</li>
     <li>Add the tag <code>backup=true</code> to instances</li>
-    <li>Create an IAM role with necessary permissions</li>
+    <li>Create an IAM role for Lambda with necessary permissions</li>
     <li>Deploy Lambda function with environment variables</li>
-    <li>Create an EventBridge schedule to trigger Lambda</li>
-    <li>Set up CloudWatch logs and custom metric tracking</li>
+    <li>Create an EventBridge schedule to trigger Lambda once a day</li>
+    <li>Set up CloudWatch logs and custom metric tracking for monitoring</li>
     <li>Create CloudWatch alarm for missed backups</li>
-    <li>(Optional) Set up cross-region copy by setting <code>DEST_REGION</code></li>
-    <li>(Optional) Subscribe to SNS notifications</li>
+    <li>Set up cross-region copy by setting <code>DEST_REGION</code></li>
+    <li>Subscribe to SNS notifications to be notified when snapshots are made or missed</li>
   </ol>
 </section>
 
-<section>
-  <h2>Future Enhancements</h2>
-  <ul>
-    <li>Store snapshots in S3 Glacier for long-term archival</li>
-    <li>Support for application-consistent snapshots using SSM</li>
-    <li>Web dashboard for viewing backup history</li>
-    <li>Tag-based retention customization (e.g., <code>retention=14</code>)</li>
-  </ul>
-</section>
-
-<section>
-  <h2>License</h2>
-  <p>MIT License — free to use and modify.</p>
-</section>
-
-<section>
-  <h2>Author</h2>
-  <p>Built with ❤️ using AWS Lambda, EC2, and EventBridge — 2025</p>
-</section>
 
 </body>
 </html>

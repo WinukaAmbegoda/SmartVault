@@ -10,6 +10,12 @@
   <p>When your company system crashes or someone wipes important files, you are not only losing money, but also the trust of your customers. While every company implements backups, this alone is not enough. <strong>Smart Vault</strong> is a fully automated, tag-based EC2 backup solution using Amazon EBS snapshots. It is designed to be smart, cost-effective, and secure. It includes automated snapshot creation, snapshot lifecycle management, cross-region disaster recovery, alerting, and monitoring — all built using AWS native services.</p>
 </section>
 
+<br/>
+<p align="center">
+  <img src="https://imgur.com/B3rZvXm" height="80%" width="80%" alt="Disk Sanitization Steps"/>
+</p>
+<br/>
+
 <section>
   <h2>Objectives</h2>
   <ul>

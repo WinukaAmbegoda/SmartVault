@@ -1,196 +1,170 @@
-Smart Vault: Automated EC2 Backup System on AWS
-
-Overview
-
-Smart Vault is a fully automated, tag-based EC2 backup solution using Amazon EBS snapshots. It is designed to be smart, cost-effective, and secure. It includes automated snapshot creation, snapshot lifecycle management, cross-region disaster recovery, alerting, and monitoring — all built using AWS native services.
-
-Objectives
-
-Prevent data loss from EC2 failures or deletions
-
-Automate backup scheduling with AWS EventBridge
-
-Retain only the necessary number of snapshots using a retention policy
-
-Enable cross-region disaster recovery by copying snapshots
-
-Provide visibility via CloudWatch metrics and alarms
-
-Notify administrators of backup success/failure using SNS
-
-Architecture Components
-
-Component
-
-Purpose
-
-EC2 + EBS
-
-Target instances with data to back up
-
-Tags
-
-Identifies which instances to include in backup (backup=true)
-
-Lambda Function
-
-Creates snapshots, deletes old ones, copies them cross-region
-
-EventBridge Rule
-
-Schedules Lambda to run periodically (e.g., every 12 hours)
-
-SNS Topic
-
-Sends notifications after backup tasks
-
-CloudWatch Logs
-
-Captures logs for debugging and monitoring
-
-CloudWatch Metric
-
-Tracks how many snapshots were created per run
-
-CloudWatch Alarm
-
-Alerts if no snapshots were created
-
-Lambda Function
-
-The Lambda function performs:
-
-EC2 discovery: Queries for EC2 instances tagged with backup=true
-
-Snapshot creation: For each volume attached, creates a snapshot and tags it
-
-Cross-region copy: Copies the snapshot to a defined second region
-
-Old snapshot cleanup: Deletes snapshots older than RETENTION_DAYS
-
-Metric reporting: Publishes SnapshotsCreated metric to CloudWatch
-
-Notification: Sends an SNS alert with a summary
-
-Required Environment Variables
-
-Variable
-
-Example
-
-SOURCE_REGION
-
-ap-southeast-2
-
-DEST_REGION
-
-ap-southeast-1
-
-RETENTION_DAYS
-
-7
-
-SNS_TOPIC_ARN
-
-arn:aws:sns:ap-southeast-2:...
-
-EventBridge Rule
-
-Type: Rate-based schedule (e.g., every 12 hours)
-
-Target: The Lambda function
-
-Permissions: IAM role with ec2:*, sns:Publish, cloudwatch:PutMetricData, logs:*
-
-CloudWatch Monitoring
-
-Metrics
-
-Custom namespace: SmartVault
-
-Metric name: SnapshotsCreated
-
-Dimension: Service=Backup
-
-Alarms
-
-Name: NoSnapshotsCreated
-
-Condition: SnapshotsCreated metric is 0 for 1 period
-
-Action: Send SNS alert to the same topic used in Lambda
-
-S3 and Cross-Region Copy
-
-Snapshots are copied from SOURCE_REGION to DEST_REGION using ec2.copy_snapshot()
-
-Copied snapshots are tagged with original snapshot ID and date
-
-Can be extended to use AWS Backup or replicate to S3 via custom scripts
-
-IAM Role Permissions
-
-The Lambda execution role must include:
-
-ec2:DescribeInstances
-
-ec2:CreateSnapshot
-
-ec2:DeleteSnapshot
-
-ec2:DescribeSnapshots
-
-ec2:CreateTags
-
-ec2:CopySnapshot
-
-cloudwatch:PutMetricData
-
-logs:*
-
-sns:Publish
-
-Sample EC2 Tagging
-
-aws ec2 create-tags \
-  --resources i-1234567890abcdef0 \
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Smart Vault - AWS EC2 Backup System</title>
+  <style>
+    body { font-family: sans-serif; margin: 2rem; line-height: 1.6; color: #333; }
+    h1, h2, h3 { color: #1a73e8; }
+    code, pre { background: #f5f5f5; padding: 0.25em 0.5em; border-radius: 4px; }
+    table { width: 100%; border-collapse: collapse; margin: 1em 0; }
+    th, td { border: 1px solid #ccc; padding: 8px; }
+    th { background: #f0f0f0; }
+    section { margin-bottom: 3rem; }
+  </style>
+</head>
+<body>
+
+<h1>Smart Vault: Automated EC2 Backup System on AWS</h1>
+
+<section>
+  <h2>Overview</h2>
+  <p><strong>Smart Vault</strong> is a fully automated, tag-based EC2 backup solution using Amazon EBS snapshots. It is designed to be smart, cost-effective, and secure. It includes automated snapshot creation, snapshot lifecycle management, cross-region disaster recovery, alerting, and monitoring — all built using AWS native services.</p>
+</section>
+
+<section>
+  <h2>Objectives</h2>
+  <ul>
+    <li>Prevent data loss from EC2 failures or deletions</li>
+    <li>Automate backup scheduling with AWS EventBridge</li>
+    <li>Retain only the necessary number of snapshots using a retention policy</li>
+    <li>Enable cross-region disaster recovery by copying snapshots</li>
+    <li>Provide visibility via CloudWatch metrics and alarms</li>
+    <li>Notify administrators of backup success/failure using SNS</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Architecture Components</h2>
+  <table>
+    <tr><th>Component</th><th>Purpose</th></tr>
+    <tr><td>EC2 + EBS</td><td>Target instances with data to back up</td></tr>
+    <tr><td>Tags</td><td>Identifies which instances to include in backup (<code>backup=true</code>)</td></tr>
+    <tr><td>Lambda Function</td><td>Creates snapshots, deletes old ones, copies them cross-region</td></tr>
+    <tr><td>EventBridge Rule</td><td>Schedules Lambda to run periodically (e.g., every 12 hours)</td></tr>
+    <tr><td>SNS Topic</td><td>Sends notifications after backup tasks</td></tr>
+    <tr><td>CloudWatch Logs</td><td>Captures logs for debugging and monitoring</td></tr>
+    <tr><td>CloudWatch Metric</td><td>Tracks how many snapshots were created per run</td></tr>
+    <tr><td>CloudWatch Alarm</td><td>Alerts if no snapshots were created</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>Lambda Function</h2>
+  <p>The Lambda function performs:</p>
+  <ol>
+    <li><strong>EC2 discovery</strong>: Queries for EC2 instances tagged with <code>backup=true</code></li>
+    <li><strong>Snapshot creation</strong>: For each volume attached, creates a snapshot and tags it</li>
+    <li><strong>Cross-region copy</strong>: Copies the snapshot to a defined second region</li>
+    <li><strong>Old snapshot cleanup</strong>: Deletes snapshots older than <code>RETENTION_DAYS</code></li>
+    <li><strong>Metric reporting</strong>: Publishes <code>SnapshotsCreated</code> metric to CloudWatch</li>
+    <li><strong>Notification</strong>: Sends an SNS alert with a summary</li>
+  </ol>
+
+  <h3>Required Environment Variables</h3>
+  <table>
+    <tr><th>Variable</th><th>Example</th></tr>
+    <tr><td><code>SOURCE_REGION</code></td><td><code>ap-southeast-2</code></td></tr>
+    <tr><td><code>DEST_REGION</code></td><td><code>ap-southeast-1</code></td></tr>
+    <tr><td><code>RETENTION_DAYS</code></td><td><code>7</code></td></tr>
+    <tr><td><code>SNS_TOPIC_ARN</code></td><td><code>arn:aws:sns:ap-southeast-2:...</code></td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>EventBridge Rule</h2>
+  <ul>
+    <li><strong>Type</strong>: Rate-based schedule (e.g., every 12 hours)</li>
+    <li><strong>Target</strong>: The Lambda function</li>
+    <li><strong>Permissions</strong>: IAM role with <code>ec2:*</code>, <code>sns:Publish</code>, <code>cloudwatch:PutMetricData</code>, <code>logs:*</code></li>
+  </ul>
+</section>
+
+<section>
+  <h2>CloudWatch Monitoring</h2>
+  <h3>Metrics</h3>
+  <ul>
+    <li>Custom namespace: <code>SmartVault</code></li>
+    <li>Metric name: <code>SnapshotsCreated</code></li>
+    <li>Dimension: <code>Service=Backup</code></li>
+  </ul>
+
+  <h3>Alarms</h3>
+  <ul>
+    <li><strong>Name</strong>: <code>NoSnapshotsCreated</code></li>
+    <li><strong>Condition</strong>: <code>SnapshotsCreated</code> metric is <code>0</code> for 1 period</li>
+    <li><strong>Action</strong>: Send SNS alert to the same topic used in Lambda</li>
+  </ul>
+</section>
+
+<section>
+  <h2>S3 and Cross-Region Copy</h2>
+  <ul>
+    <li>Snapshots are copied from <code>SOURCE_REGION</code> to <code>DEST_REGION</code> using <code>ec2.copy_snapshot()</code></li>
+    <li>Copied snapshots are tagged with original snapshot ID and date</li>
+    <li>Can be extended to use AWS Backup or replicate to S3 via custom scripts</li>
+  </ul>
+</section>
+
+<section>
+  <h2>IAM Role Permissions</h2>
+  <p>The Lambda execution role must include:</p>
+  <ul>
+    <li><code>ec2:DescribeInstances</code></li>
+    <li><code>ec2:CreateSnapshot</code></li>
+    <li><code>ec2:DeleteSnapshot</code></li>
+    <li><code>ec2:DescribeSnapshots</code></li>
+    <li><code>ec2:CreateTags</code></li>
+    <li><code>ec2:CopySnapshot</code></li>
+    <li><code>cloudwatch:PutMetricData</code></li>
+    <li><code>logs:*</code></li>
+    <li><code>sns:Publish</code></li>
+  </ul>
+</section>
+
+<section>
+  <h2>Sample EC2 Tagging</h2>
+  <pre><code>aws ec2 create-tags \\
+  --resources i-1234567890abcdef0 \\
   --tags Key=backup,Value=true
+  </code></pre>
+</section>
 
-Deployment Steps
+<section>
+  <h2>Deployment Steps</h2>
+  <ol>
+    <li>Launch EC2 instances and attach EBS volumes</li>
+    <li>Add the tag <code>backup=true</code> to instances</li>
+    <li>Create an IAM role with necessary permissions</li>
+    <li>Deploy Lambda function with environment variables</li>
+    <li>Create an EventBridge schedule to trigger Lambda</li>
+    <li>Set up CloudWatch logs and custom metric tracking</li>
+    <li>Create CloudWatch alarm for missed backups</li>
+    <li>(Optional) Set up cross-region copy by setting <code>DEST_REGION</code></li>
+    <li>(Optional) Subscribe to SNS notifications</li>
+  </ol>
+</section>
 
-Launch EC2 instances and attach EBS volumes
+<section>
+  <h2>Future Enhancements</h2>
+  <ul>
+    <li>Store snapshots in S3 Glacier for long-term archival</li>
+    <li>Support for application-consistent snapshots using SSM</li>
+    <li>Web dashboard for viewing backup history</li>
+    <li>Tag-based retention customization (e.g., <code>retention=14</code>)</li>
+  </ul>
+</section>
 
-Add the tag backup=true to instances
+<section>
+  <h2>License</h2>
+  <p>MIT License — free to use and modify.</p>
+</section>
 
-Create an IAM role with necessary permissions
+<section>
+  <h2>Author</h2>
+  <p>Built with ❤️ using AWS Lambda, EC2, and EventBridge — 2025</p>
+</section>
 
-Deploy Lambda function with environment variables
-
-Create an EventBridge schedule to trigger Lambda
-
-Set up CloudWatch logs and custom metric tracking
-
-Create CloudWatch alarm for missed backups
-
-(Optional) Set up cross-region copy by setting DEST_REGION
-
-(Optional) Subscribe to SNS notifications
-
-Future Enhancements
-
-Store snapshots in S3 Glacier for long-term archival
-
-Support for application-consistent snapshots using SSM
-
-Web dashboard for viewing backup history
-
-Tag-based retention customization (e.g., retention=14)
-
-License
-
-MIT License — free to use and modify.
-
-Author
-
-Built with ❤️ using AWS Lambda, EC2, and EventBridge — 2025
-
+</body>
+</html>

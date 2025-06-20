@@ -12,7 +12,7 @@
 
 <br/>
 <p align="center">
-  <img src="https://imgur.com/B3rZvXm.png" height="80%" width="80%" alt="Architecture Diagram"/>
+  <img src="https://imgur.com/tb7fLD7.png" height="80%" width="80%" alt="Architecture Diagram"/>
 </p>
 <br/>
 

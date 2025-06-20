@@ -12,7 +12,7 @@
 
 <br/>
 <p align="center">
-  <img src="https://imgur.com/B3rZvXm" height="80%" width="80%" alt="Disk Sanitization Steps"/>
+  <img src="https://imgur.com/B3rZvXm.png" height="80%" width="80%" alt="Architecture Diagram"/>
 </p>
 <br/>
 

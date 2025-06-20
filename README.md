@@ -38,6 +38,21 @@
 </section>
 
 <section>
+  <h2>Deployment Steps</h2>
+  <ol>
+    <li>Launch EC2 instances and attach EBS volumes</li>
+    <li>Add the tag <code>backup=true</code> to instances</li>
+    <li>Create an IAM role for Lambda with necessary permissions</li>
+    <li>Deploy Lambda function with environment variables</li>
+    <li>Create an EventBridge schedule to trigger Lambda once a day</li>
+    <li>Set up CloudWatch logs and custom metric tracking for monitoring</li>
+    <li>Create CloudWatch alarm for missed backups</li>
+    <li>Set up cross-region copy by setting <code>DEST_REGION</code></li>
+    <li>Subscribe to SNS notifications to be notified when snapshots are made or missed</li>
+  </ol>
+</section>
+
+<section>
   <h2>Lambda Function</h2>
   <p>The Lambda function performs:</p>
   <ol>
@@ -196,21 +211,6 @@ def lambda_handler(event, context):
     <li><code>CloudWatchLogsFullAccess</code></li>
     <li><code>AmazonS3FullAccess</code></li>
   </ul>
-</section>
-
-<section>
-  <h2>Deployment Steps</h2>
-  <ol>
-    <li>Launch EC2 instances and attach EBS volumes</li>
-    <li>Add the tag <code>backup=true</code> to instances</li>
-    <li>Create an IAM role for Lambda with necessary permissions</li>
-    <li>Deploy Lambda function with environment variables</li>
-    <li>Create an EventBridge schedule to trigger Lambda once a day</li>
-    <li>Set up CloudWatch logs and custom metric tracking for monitoring</li>
-    <li>Create CloudWatch alarm for missed backups</li>
-    <li>Set up cross-region copy by setting <code>DEST_REGION</code></li>
-    <li>Subscribe to SNS notifications to be notified when snapshots are made or missed</li>
-  </ol>
 </section>
 
 

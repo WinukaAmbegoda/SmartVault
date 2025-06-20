@@ -7,7 +7,7 @@
 
 <section>
   <h2>Overview</h2>
-  <p><strong>Smart Vault</strong> is a fully automated, tag-based EC2 backup solution using Amazon EBS snapshots. It is designed to be smart, cost-effective, and secure. It includes automated snapshot creation, snapshot lifecycle management, cross-region disaster recovery, alerting, and monitoring — all built using AWS native services.</p>
+  <p>When your company system crashes or someone wipes important files, you are not only losing money, but also the trust of your customers. While every company implements backups, this alone is not enough. <strong>Smart Vault</strong> is a fully automated, tag-based EC2 backup solution using Amazon EBS snapshots. It is designed to be smart, cost-effective, and secure. It includes automated snapshot creation, snapshot lifecycle management, cross-region disaster recovery, alerting, and monitoring — all built using AWS native services.</p>
 </section>
 
 <section>
@@ -159,7 +159,6 @@ def lambda_handler(event, context):
   <ul>
     <li><strong>Type</strong>: Rate-based schedule (e.g., every 12 hours)</li>
     <li><strong>Target</strong>: The Lambda function</li>
-    <li><strong>Permissions</strong>: IAM role with <code>ec2:*</code>, <code>sns:Publish</code>, <code>cloudwatch:PutMetricData</code>, <code>logs:*</code></li>
   </ul>
 </section>
 
@@ -185,7 +184,6 @@ def lambda_handler(event, context):
   <ul>
     <li>Snapshots are copied from <code>SOURCE_REGION</code> to <code>DEST_REGION</code> using <code>ec2.copy_snapshot()</code></li>
     <li>Copied snapshots are tagged with original snapshot ID and date</li>
-    <li>Can be extended to use AWS Backup or replicate to S3 via custom scripts</li>
   </ul>
 </section>
 

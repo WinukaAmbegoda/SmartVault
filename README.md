@@ -33,9 +33,6 @@
   <table>
     <tr><th>Component</th><th>Purpose</th></tr>
     <tr><td>EC2 + EBS</td><td>Target instances with data to back up</td></tr>
-<p align="center">
-  <img src="https://imgur.com/EV0nXVc.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
-</p>
     <tr><td>Tags</td><td>Identifies which instances to include in backup (<code>backup=true</code>)</td></tr>
     <tr><td>Lambda Function</td><td>Creates snapshots, deletes old ones, copies them cross-region</td></tr>
     <tr><td>EventBridge Rule</td><td>Schedules Lambda to run periodically (e.g., every 12 hours)</td></tr>
@@ -51,15 +48,18 @@
   <ol>
     <li>Launch EC2 instances and attach EBS volumes</li>
     <li>Add the tag <code>backup=true</code> to instances</li>
+  <p align="center">
+  <img src="https://imgur.com/EV0nXVc.png" height="90%" width="90%" alt="Disk Sanitization Steps"/>
+  </p>
     <li>Create an IAM role for Lambda with necessary permissions</li>
+  <p align="center">
+  <img src="https://imgur.com/4pKQGkj.png" height="90%" width="90%" alt="Disk Sanitization Steps"/>
+  </p>
+    <li>Create an SNS topic and register an email to recieve alerts</li>
+  <p align="center">
+  <img src="https://imgur.com/rgMsh2y.png" height="90%" width="90%" alt="Disk Sanitization Steps"/>
+  </p>
     <li>Deploy Lambda function with environment variables</li>
-    <li>Create an EventBridge schedule to trigger Lambda once a day</li>
-    <li>Set up CloudWatch logs and custom metric tracking for monitoring</li>
-    <li>Create CloudWatch alarm for missed backups</li>
-    <li>Set up cross-region copy by setting <code>DEST_REGION</code></li>
-    <li>Subscribe to SNS notifications to be notified when snapshots are made or missed</li>
-  </ol>
-</section>
 
 <section>
   <h2>Lambda Function</h2>
@@ -177,6 +177,29 @@ def lambda_handler(event, context):
 
 ```
 </section>
+    <li>Create an EventBridge schedule to trigger Lambda once a day</li>
+  <p align="center">
+  <img src="https://imgur.com/sbrZ37C.png" height="90%" width="90%" alt="Disk Sanitization Steps"/>
+  </p>
+  <p align="center">
+  <img src="https://imgur.com/881H7pq.png" height="90%" width="90%" alt="Disk Sanitization Steps"/>
+  </p>
+    <li>Set up CloudWatch logs and custom metric tracking for monitoring</li>
+  <p align="center">
+  <img src="https://imgur.com/y7v1wEQ.png" height="90%" width="90%" alt="Disk Sanitization Steps"/>
+  </p>
+  <p align="center">
+  <img src="https://imgur.com/c3nBb2N.png" height="90%" width="90%" alt="Disk Sanitization Steps"/>
+  </p>
+    <li>Create CloudWatch alarm for missed backups</li>
+  <p align="center">
+  <img src="https://imgur.com/tM1G7Qk.png" height="90%" width="90%" alt="Disk Sanitization Steps"/>
+  </p>
+    <li>Subscribe to SNS notifications to be notified when snapshots are made or missed</li>
+  </ol>
+</section>
+
+
 
 <section>
   <h2>EventBridge Rule</h2>

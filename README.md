@@ -178,7 +178,7 @@ def lambda_handler(event, context):
 <section>
   <h2>EventBridge Rule</h2>
   <ul>
-    <li><strong>Type</strong>: Rate-based schedule (e.g., every 12 hours)</li>
+    <li><strong>Type</strong>: Rate-based schedule (e.g., every 24 hours)</li>
     <li><strong>Target</strong>: The Lambda function</li>
   </ul>
 </section>

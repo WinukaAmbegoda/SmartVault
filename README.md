@@ -246,7 +246,7 @@ def lambda_handler(event, context):
   <h2>S3 and Cross-Region Copy</h2>
   <ul>
     <li>Snapshots are copied from <code>SOURCE_REGION</code> to <code>DEST_REGION</code> using <code>ec2.copy_snapshot()</code></li>
-    <li>Copied snapshots are tagged with original snapshot ID and date</li>
+    <li>Copied snapshots are tagged with source region, original snapshot ID and date</li>
   </ul>
 </section>
 
@@ -255,7 +255,7 @@ def lambda_handler(event, context):
   <ul>
     <li>Upon checking the <code>ap-southeast-1</code> region for the copied snapshots, I realised that each snapshot had an "error" status and "0%" Progess.</li>
     <p align="center">
-    <img src="https://imgur.com/17i5wL2.png" height="100%" width="90%" alt="CloudWatch Alarm"/>
+    <img src="https://imgur.com/17i5wL2.png" height="100%" width="90%" alt="Copied Snapshot error"/>
     </p>
     <li>I reinvoked the lambda function and noticed that the snapshots were being copied to ap-southeast-1 within seconds. But this is not an expected behaviour from copying EBS volumes as it should take a few minutes to create an EBS snapshot and copy EBS volumes to another region.</li>
     <li> After some research I realised that the Lambda function is copying snapshots before it had finished created the snapshot in the ap-southeast-2 region. </li>
@@ -269,7 +269,7 @@ def lambda_handler(event, context):
     </li>
     <li> As to my expectations, this fixed the issue and each copied snapshot had a status of "Completed" and progress of "100%" </li>
     <p align="center">
-    <img src="https://imgur.com/e6hw9kn.png" height="100%" width="90%" alt="CloudWatch Alarm"/>
+    <img src="https://imgur.com/e6hw9kn.png" height="100%" width="90%" alt="Copied Snapshot error FIXED"/>
     </p>
   </ul>
 </section>

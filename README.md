@@ -246,7 +246,7 @@ def lambda_handler(event, context):
 </section>
 
 <section>
-  <h2>S3 and Cross-Region Copy</h2>
+  <h2>Cross-Region Snapshot Copy</h2>
   <ul>
     <li>Snapshots are copied from <code>SOURCE_REGION</code> to <code>DEST_REGION</code> using <code>ec2.copy_snapshot()</code></li>
     <li>Copied snapshots are tagged with source region, original snapshot ID and date</li>

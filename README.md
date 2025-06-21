@@ -201,11 +201,14 @@ def lambda_handler(event, context):
 </section>
 
 <section>
-  <h2>EventBridge Rule</h2>
+  <h2>EventBridge Schedule</h2>
   <ul>
     <li><strong>Type</strong>: CRON-based schedule (e.g., every day at 3am)</li>
     <li><strong>Target</strong>: The Lambda function</li>
   </ul>
+  <p align="center">
+  <img src="https://imgur.com/sbrZ37C.png" height="90%" width="90%" alt=EventBridge Schedule"/>
+  </p>
 </section>
 
 <section>

@@ -255,7 +255,7 @@ def lambda_handler(event, context):
   <ul>
     <li>Upon checking the <code>ap-southeast-1</code> region for the copied snapshots, I realised that each snapshot had an "error" status and "0%" Progess.</li>
     <p align="center">
-    <img src="https://imgur.com/6UzFuaM.png" height="10%" width="90%" alt="CloudWatch Alarm"/>
+    <img src="https://imgur.com/17i5wL2.png" height="100%" width="90%" alt="CloudWatch Alarm"/>
     </p>
     <li>I reinvoked the lambda function and noticed that the snapshots were being copied to ap-southeast-1 within seconds. But this is not an expected behaviour from copying EBS volumes as it should take a few minutes to create an EBS snapshot and copy EBS volumes to another region.</li>
     <li> After some research I realised that the Lambda function is copying snapshots before it had finished created the snapshot in the ap-southeast-2 region. </li>

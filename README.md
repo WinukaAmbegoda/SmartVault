@@ -225,7 +225,7 @@ def lambda_handler(event, context):
 
   <h3>Metrics</h3>
   <ul>
-    <li>Metric Creation: <code>Created in Lambda function</code></li>
+    <li>Metric Creation: Created in Lambda function</li>
     <li>Custom namespace: <code>SmartVault</code></li>
     <li>Metric name: <code>SnapshotsCreated</code></li>
     <li>Dimension: <code>Service=Backup</code></li>
@@ -249,6 +249,18 @@ def lambda_handler(event, context):
     <li>Copied snapshots are tagged with original snapshot ID and date</li>
   </ul>
 </section>
+
+<section>
+  <h2>Issues I Faced</h2>
+  <ul>
+    <li>After checking the <code>ap-southeast-1</code> region for the copied snapshots, each snapshot had an "error" status.</li>
+     <p align="center">
+    <img src="https://imgur.com/6UzFuaM.png" height="90%" width="90%" alt="CloudWatch Alarm"/>
+    </p>
+    <li>Copied snapshots are tagged with original snapshot ID and date</li>
+  </ul>
+</section>
+
 
 
 

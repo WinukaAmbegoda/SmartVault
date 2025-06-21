@@ -70,6 +70,20 @@
 </section>
 
 <section>
+  <h2>IAM Role Permissions</h2>
+  <p>The Lambda execution role includes:</p>
+  <ul>
+    <li><code>AmazonEC2FullAccess</code></li>
+    <li><code>AmazonSNSFullAccess</code></li>
+    <li><code>CloudWatchLogsFullAccess</code></li>
+    <li><code>AmazonS3FullAccess</code></li>
+  </ul>
+  <p align="center">
+  <img src="https://imgur.com/4pKQGkj.png" height="90%" width="90%" alt="IAM Role"/>
+  </p>
+</section>
+
+<section>
   <h2>Lambda Function</h2>
   <p>The Lambda function performs:</p>
   <ol>
@@ -189,15 +203,29 @@ def lambda_handler(event, context):
 <section>
   <h2>EventBridge Rule</h2>
   <ul>
-    <li><strong>Type</strong>: Rate-based schedule (e.g., every 24 hours)</li>
+    <li><strong>Type</strong>: CRON-based schedule (e.g., every day at 3am)</li>
     <li><strong>Target</strong>: The Lambda function</li>
   </ul>
 </section>
 
 <section>
   <h2>CloudWatch Monitoring</h2>
+  <h3>Log Event from Lamda Function</h3>
+  <ul>
+    <li>Lambda function started.</li>
+    <li>Created a snapshot for volume <code>vol-00a21c32b2a70c733</code>.</li>
+    <li>Copied that snapshot to region <code>ap-southeast-1</code>.</li>
+    <li>Created a snapshot for volume <code>vol-033b200d516094ff6</code>.</li>
+    <li>Copied that snapshot to region <code>ap-southeast-1</code>.</li>
+    <li>Lambda function completed successfully.</li>
+  </ul>
+  <p align="center">
+  <img src="https://imgur.com/c3nBb2N.png" height="90%" width="90%" alt="log event"/>
+  </p>
+
   <h3>Metrics</h3>
   <ul>
+    <li>Metric Creation: <code>Created in Lambda function</code></li>
     <li>Custom namespace: <code>SmartVault</code></li>
     <li>Metric name: <code>SnapshotsCreated</code></li>
     <li>Dimension: <code>Service=Backup</code></li>
@@ -209,6 +237,9 @@ def lambda_handler(event, context):
     <li><strong>Condition</strong>: <code>SnapshotsCreated</code> metric is <code>0</code> for 1 period</li>
     <li><strong>Action</strong>: Send SNS alert to the same topic used in Lambda</li>
   </ul>
+  <p align="center">
+  <img src="https://imgur.com/tM1G7Qk.png" height="90%" width="90%" alt="CloudWatch Alarm"/>
+  </p>
 </section>
 
 <section>
@@ -219,16 +250,7 @@ def lambda_handler(event, context):
   </ul>
 </section>
 
-<section>
-  <h2>IAM Role Permissions</h2>
-  <p>The Lambda execution role includes:</p>
-  <ul>
-    <li><code>AmazonEC2FullAccess</code></li>
-    <li><code>AmazonSNSFullAccess</code></li>
-    <li><code>CloudWatchLogsFullAccess</code></li>
-    <li><code>AmazonS3FullAccess</code></li>
-  </ul>
-</section>
+
 
 
 </body>

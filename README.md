@@ -59,6 +59,17 @@
 </section>
 
 <section>
+  <h2>EC2 Tagging</h2>
+  <ul>
+    <li><strong>Key</strong>: "backup"</li>
+    <li><strong>Value</strong>: "true"</li>
+  </ul>
+  <p align="center">
+  <img src="https://imgur.com/EV0nXVc.png" height="90%" width="90%" alt="EC2 TAGGING"/>
+  </p>
+</section>
+
+<section>
   <h2>Lambda Function</h2>
   <p>The Lambda function performs:</p>
   <ol>

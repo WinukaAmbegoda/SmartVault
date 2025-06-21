@@ -260,6 +260,11 @@ def lambda_handler(event, context):
     <li>I reinvoked the lambda function and noticed that the snapshots were being copied to ap-southeast-1 within seconds. But this is not an expected behaviour from copying EBS volumes as it should take a few minutes to create an EBS snapshot and copy EBS volumes to another region.</li>
     <li> After some research I realised that the Lambda function is copying snapshots before it had finished created the snapshot in the ap-southeast-2 region. </li>
     <li> My next point of action was to implement a waiter in the python code to wait for the snapshot to be completely created before attempting to copy it to another region</li>
+    ```python
+          # Wait until snapshot is completed before copying
+          waiter = ec2.get_waiter('snapshot_completed')
+          waiter.wait(SnapshotIds=[snapshot_id])
+    ```
     <li> As to my expectations, this fixed the issue and each copied snapshot had a status of "Completed" and progress of "100%" </li>
     <p align="center">
     <img src="https://imgur.com/e6hw9kn.png" height="100%" width="90%" alt="CloudWatch Alarm"/>

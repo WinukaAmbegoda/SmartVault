@@ -33,6 +33,9 @@
   <table>
     <tr><th>Component</th><th>Purpose</th></tr>
     <tr><td>EC2 + EBS</td><td>Target instances with data to back up</td></tr>
+<p align="center">
+  <img src="https://imgur.com/EV0nXVc.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
+</p>
     <tr><td>Tags</td><td>Identifies which instances to include in backup (<code>backup=true</code>)</td></tr>
     <tr><td>Lambda Function</td><td>Creates snapshots, deletes old ones, copies them cross-region</td></tr>
     <tr><td>EventBridge Rule</td><td>Schedules Lambda to run periodically (e.g., every 12 hours)</td></tr>

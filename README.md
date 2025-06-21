@@ -213,9 +213,9 @@ def lambda_handler(event, context):
   <h3>Log Event from Lamda Function</h3>
   <ul>
     <li>Lambda function started.</li>
-    <li>Created a snapshot for volume <code>vol-00a21c32b2a70c733</code>.</li>
+    <li>Created a snapshot for volume of <code>SmartVaultEC2Instance1</code>.</li>
     <li>Copied that snapshot to region <code>ap-southeast-1</code>.</li>
-    <li>Created a snapshot for volume <code>vol-033b200d516094ff6</code>.</li>
+    <li>Created a snapshot for volume of <code>SmartVaultEC2Instance2</code>.</li>
     <li>Copied that snapshot to region <code>ap-southeast-1</code>.</li>
     <li>Lambda function completed successfully.</li>
   </ul>

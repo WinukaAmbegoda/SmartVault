@@ -253,6 +253,15 @@ def lambda_handler(event, context):
   </ul>
 </section>
 
+<h3>SNS Email Notification</h3>
+  <ul>
+    <li>Every day at 3am, SNS sends an email notifying the number of snapshots created and if cross region copying is complete</li>
+  </ul>
+  <p align="center">
+  <img src="https://imgur.com/rWUzXVJ.png" height="90%" width="90%" alt="SNS email"/>
+  </p>
+</section>
+
 <section>
   <h2>Issues I Faced</h2>
   <ul>
